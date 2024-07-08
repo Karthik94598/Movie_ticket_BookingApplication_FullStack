@@ -1,0 +1,27 @@
+body{
+    background-color: bisque;
+}
+.seat{
+    background-color: rgb(77, 139, 77);
+    height: 30px;
+    width: 35px;
+    margin: 3px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+.seat:nth-of-type(4n){
+    margin-right: 20px;
+}
+.seat.selected{
+    background-color: rgb(200, 44, 44);
+}
+.seat.occupied{
+    background-color: rgb(106, 97, 97);
+}
+.screen{
+    background-color: silver;
+    height: 70px;
+    width: 100%;
+    margin: 15px 0;
+    transform: perspective(400px) rotateX(-45deg);
+}

@@ -2,21 +2,96 @@ import express from 'express';
 import hbs from 'hbs';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
+import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
+import path from 'path'
 import {readPosts,readusers,insertpost,insertuser,likefunc,sharefunc,delfunc} from './operation.js';
+import { fileURLToPath } from 'url';
+import { type } from 'os';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const secret = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
+
+mongoose.connect("mongodb://localhost:27017/cinema")
+
+const screen1Model = mongoose.model('screen1',{
+    seatNo : {type:Number},
+    status : {type:String}
+})
+
+const screen2Model = mongoose.model('screen2',{
+    seatNo : {type:Number},
+    status : {type:String}
+})
+
+const screen3Model = mongoose.model('screen3',{
+    seatNo : {type:Number},
+    status : {type:String}
+})
+
+const moviesModel = mongoose.model('movies',{
+    name : {type:String},
+    rate : {type:Number},
+    screeNo : {type:Number}
+})
+
+var screen1Res
+screen1Model.find()
+.then(function(output){
+    screen1Res = output
+})
+.catch(function(err){
+    console.log(err)
+})
+
+var screen2Res
+screen2Model.find()
+.then(function(output){
+    screen2Res = output
+})
+.catch(function(err){
+    console.log(err)
+})
+
+var screen3Res
+screen3Model.find()
+.then(function(output){
+    screen3Res = output
+})
+.catch(function(err){
+    console.log(err)
+})
+
+var moviesRes
+moviesModel.find()
+.then(function(output){
+    moviesRes = output
+})
+.catch(function(err){
+    console.log(err)
+})
 
 app.set('view engine', 'hbs');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname,'public')));
 
 app.get('/', (req, res) => {
     res.render('login');
 });
+
+app.get('/cinema',(req,res)=>{
+    res.render('cinema',{
+        movies : moviesRes,
+        screen1 : screen1Res,
+        screen2 : screen2Res,
+        screen3 : screen3Res
+    })
+})
 
 app.post('/login', async (req, res) => {
     try {
@@ -77,7 +152,6 @@ function verifyLogin(req, res, next) {
             return res.sendStatus(403); // Forbidden
         }
         req.payload = payload;
-        console.log('JWT verified, payload:', payload);
         next();
     });
 }
